@@ -8,7 +8,7 @@ function formatTime(date) {
   }).format(date)
 }
 
-function Taskbar({ isStartOpen, onToggleStart, journalState, onJournalClick, onOpenJournal }) {
+function Taskbar({ isStartOpen, onToggleStart, programs, onOpenJournal }) {
   const [time, setTime] = useState(() => formatTime(new Date()))
 
   useEffect(() => {
@@ -33,16 +33,17 @@ function Taskbar({ isStartOpen, onToggleStart, journalState, onJournalClick, onO
         </button>
         <div className="taskbar__divider" />
         <div className="taskbar__programs">
-          {journalState !== 'closed' && (
+          {programs.filter((program) => program.state !== 'closed').map((program) => (
             <button
-              className={`taskbar__program ${journalState === 'open' ? 'is-active' : ''}`}
+              key={program.id}
+              className={`taskbar__program ${program.isActive ? 'is-active' : ''}`}
               type="button"
-              onClick={onJournalClick}
+              onClick={program.onClick}
             >
-              <span className="menu-icon menu-icon--journal" aria-hidden="true" />
-              Journal
+              <span className={`menu-icon menu-icon--${program.icon}`} aria-hidden="true" />
+              {program.label}
             </button>
-          )}
+          ))}
         </div>
         <div className="taskbar__tray">
           <span className="taskbar__speaker" aria-hidden="true">)))</span>

@@ -1,9 +1,19 @@
 import { useRef, useState } from 'react'
 
-function Window({ title, children, isHidden, onMinimize, onClose }) {
+function Window({
+  title,
+  icon = 'journal',
+  children,
+  isHidden,
+  isActive,
+  initialPosition,
+  onFocus,
+  onMinimize,
+  onClose,
+}) {
   const [position, setPosition] = useState(() => ({
-    x: Math.max(12, Math.min(window.innerWidth - 690, 150)),
-    y: Math.max(12, Math.min(window.innerHeight - 480, 72)),
+    x: Math.max(12, Math.min(window.innerWidth - 690, initialPosition?.x ?? 150)),
+    y: Math.max(12, Math.min(window.innerHeight - 480, initialPosition?.y ?? 72)),
   }))
   const [isMaximized, setIsMaximized] = useState(false)
   const dragState = useRef(null)
@@ -37,9 +47,10 @@ function Window({ title, children, isHidden, onMinimize, onClose }) {
 
   return (
     <section
-      className={`window ${isMaximized ? 'is-maximized' : ''} ${isHidden ? 'is-hidden' : ''}`}
+      className={`window ${isActive ? 'is-active' : ''} ${isMaximized ? 'is-maximized' : ''} ${isHidden ? 'is-hidden' : ''}`}
       style={isMaximized ? undefined : { left: position.x, top: position.y }}
       aria-label={`${title} window`}
+      onPointerDown={onFocus}
     >
       <header
         className="window__titlebar"
@@ -50,7 +61,7 @@ function Window({ title, children, isHidden, onMinimize, onClose }) {
         onDoubleClick={() => setIsMaximized((current) => !current)}
       >
         <div className="window__title">
-          <span className="menu-icon menu-icon--journal" aria-hidden="true" />
+          <span className={`menu-icon menu-icon--${icon}`} aria-hidden="true" />
           <strong>{title}</strong>
         </div>
         <div className="window__controls" onDoubleClick={(event) => event.stopPropagation()}>

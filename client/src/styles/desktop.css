@@ -237,6 +237,10 @@ button {
   box-shadow: 1px 1px 0 var(--win-dark);
 }
 
+.window.is-active {
+  z-index: 10;
+}
+
 .window.is-hidden {
   display: none;
 }
@@ -255,10 +259,14 @@ button {
   justify-content: space-between;
   padding: 2px 2px 2px 4px;
   box-sizing: border-box;
-  background: var(--win-blue);
+  background: var(--win-dark);
   color: #fff;
   touch-action: none;
   cursor: move;
+}
+
+.window.is-active .window__titlebar {
+  background: var(--win-blue);
 }
 
 .window__title {
@@ -402,6 +410,183 @@ button {
 .journal-app__actions span {
   margin-right: auto;
   color: #333;
+}
+
+.feelings-app {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 12px;
+  background: var(--win-gray);
+}
+
+.feelings-app__prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: center;
+}
+
+.feelings-app__prompt strong {
+  font-size: 15px;
+}
+
+.feelings-wheel {
+  position: relative;
+  width: 330px;
+  height: 270px;
+  align-self: center;
+  justify-self: center;
+}
+
+.feelings-wheel::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 220px;
+  box-sizing: border-box;
+  border: 2px solid var(--win-dark);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-radius: 50%;
+  background: #d3d3d3;
+  transform: translate(-50%, -50%);
+}
+
+.feelings-wheel__center {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 2px solid var(--win-dark);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-radius: 50%;
+  background: var(--win-gray);
+  font-weight: 700;
+  transform: translate(-50%, -50%);
+}
+
+.feelings-wheel button {
+  --feeling-angle: calc(var(--feeling-index) * 45deg);
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 82px;
+  height: 38px;
+  padding: 2px 5px;
+  border-top: 2px solid var(--win-light);
+  border-left: 2px solid var(--win-light);
+  border-right: 2px solid var(--win-black);
+  border-bottom: 2px solid var(--win-black);
+  border-radius: 0;
+  background: var(--feeling-color);
+  font-weight: 700;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--feeling-angle))
+    translateY(-112px)
+    rotate(calc(-1 * var(--feeling-angle)));
+}
+
+.feelings-wheel button:hover,
+.feelings-wheel button:focus-visible {
+  outline: 2px dotted #000;
+  outline-offset: -6px;
+}
+
+.feelings-wheel button:active,
+.feelings-wheel button.is-selected {
+  border-top-color: var(--win-black);
+  border-left-color: var(--win-black);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  box-shadow: inset 1px 1px 0 var(--win-dark);
+}
+
+.feelings-app__status,
+.mood-history__footer {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 3px 6px;
+  border-top: 2px solid var(--win-dark);
+  border-left: 2px solid var(--win-dark);
+  border-right: 1px solid var(--win-light);
+  border-bottom: 1px solid var(--win-light);
+  background: var(--win-gray);
+}
+
+.mood-history {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 7px;
+  padding: 10px;
+  background: var(--win-gray);
+}
+
+.mood-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mood-history__header strong {
+  font-size: 15px;
+}
+
+.mood-history__list {
+  min-height: 0;
+  overflow-y: auto;
+  border-top: 2px solid var(--win-black);
+  border-left: 2px solid var(--win-black);
+  border-right: 2px solid var(--win-light);
+  border-bottom: 2px solid var(--win-light);
+  background: #fff;
+  user-select: text;
+}
+
+.mood-history__empty {
+  padding: 14px;
+  color: #555;
+}
+
+.mood-history__entry {
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: 22px minmax(80px, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 8px;
+  box-sizing: border-box;
+  border-bottom: 1px dotted var(--win-dark);
+}
+
+.mood-history__entry:nth-child(even) {
+  background: #efefef;
+}
+
+.mood-history__swatch {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 1px solid #222;
+}
+
+.mood-history__entry time {
+  color: #444;
 }
 
 .win95-button {
@@ -617,6 +802,37 @@ button {
     width: calc(100vw - 12px);
     height: calc(100vh - 54px);
     min-width: 0;
+  }
+
+  .feelings-app {
+    padding: 8px;
+  }
+
+  .feelings-wheel {
+    width: 280px;
+    height: 270px;
+  }
+
+  .feelings-wheel::before {
+    width: 190px;
+    height: 190px;
+  }
+
+  .feelings-wheel button {
+    width: 72px;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--feeling-angle))
+      translateY(-98px)
+      rotate(calc(-1 * var(--feeling-angle)));
+  }
+
+  .mood-history__entry {
+    grid-template-columns: 22px 1fr;
+  }
+
+  .mood-history__entry time {
+    grid-column: 2;
   }
 
   .taskbar__speaker {
