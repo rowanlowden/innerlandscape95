@@ -55,6 +55,8 @@ function Desktop() {
       {
         id: `${Date.now()}-${entries.length}`,
         name: feeling.name,
+        group: feeling.group,
+        groupLabel: feeling.groupLabel,
         color: feeling.color,
         loggedAt: new Date(),
       },
