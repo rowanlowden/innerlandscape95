@@ -9,7 +9,7 @@ function Window({ title, children, isHidden, onMinimize, onClose }) {
   const dragState = useRef(null)
 
   function handlePointerDown(event) {
-    if (isMaximized || event.button !== 0) return
+    if (isMaximized || event.button !== 0 || event.target.closest('button')) return
 
     dragState.current = {
       pointerX: event.clientX,
