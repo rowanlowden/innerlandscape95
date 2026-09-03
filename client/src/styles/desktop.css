@@ -336,6 +336,7 @@ button {
 }
 
 .journal-app {
+  position: relative;
   min-height: 0;
   flex: 1;
   display: flex;
@@ -351,19 +352,110 @@ button {
   gap: 2px;
   padding: 0 5px;
   border-bottom: 1px solid var(--win-dark);
+  overflow: visible;
 }
 
-.journal-app__menu button {
+.journal-app__menu > .journal-menu > button {
   padding: 3px 7px;
   border: 0;
   background: transparent;
 }
 
-.journal-app__menu button:focus,
-.journal-app__menu button:hover {
+.journal-app__menu > .journal-menu > button:focus,
+.journal-app__menu > .journal-menu > button:hover,
+.journal-app__menu > .journal-menu > button.is-open {
   background: var(--win-blue);
   color: #fff;
   outline: 0;
+}
+
+.journal-menu {
+  position: relative;
+}
+
+.journal-menu__dropdown {
+  position: absolute;
+  z-index: 12;
+  top: 22px;
+  left: 0;
+  width: 190px;
+  box-sizing: border-box;
+  padding: 3px;
+  border-top: 2px solid var(--win-light);
+  border-left: 2px solid var(--win-light);
+  border-right: 2px solid var(--win-black);
+  border-bottom: 2px solid var(--win-black);
+  background: var(--win-gray);
+  box-shadow: 1px 1px 0 var(--win-dark);
+}
+
+.journal-menu__dropdown--entries {
+  width: 290px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.journal-menu__dropdown button {
+  width: 100%;
+  min-height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 16px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.journal-menu__dropdown button:hover,
+.journal-menu__dropdown button:focus,
+.journal-menu__dropdown button.is-current {
+  background: var(--win-blue);
+  color: #fff;
+  outline: 0;
+}
+
+.journal-menu__dropdown button:disabled {
+  background: transparent;
+  color: var(--win-dark);
+  text-shadow: 1px 1px var(--win-light);
+}
+
+.journal-menu__dropdown button span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journal-menu__dropdown kbd,
+.journal-menu__dropdown time {
+  flex: 0 0 auto;
+  color: inherit;
+  font: inherit;
+  font-size: 10px;
+}
+
+.journal-menu__heading,
+.journal-menu__empty {
+  padding: 5px 8px;
+}
+
+.journal-menu__heading {
+  font-weight: 700;
+}
+
+.journal-menu__empty {
+  color: #555;
+  font-style: italic;
+}
+
+.journal-menu__separator {
+  height: 2px;
+  margin: 3px 2px;
+  border-top: 1px solid var(--win-dark);
+  border-bottom: 1px solid var(--win-light);
 }
 
 .journal-app__body {
@@ -410,6 +502,65 @@ button {
 .journal-app__actions span {
   margin-right: auto;
   color: #333;
+}
+
+.journal-dialog-backdrop {
+  position: absolute;
+  z-index: 20;
+  inset: 27px 0 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.journal-dialog {
+  width: min(360px, calc(100% - 28px));
+  box-sizing: border-box;
+  padding: 3px;
+  border-top: 2px solid var(--win-light);
+  border-left: 2px solid var(--win-light);
+  border-right: 2px solid var(--win-black);
+  border-bottom: 2px solid var(--win-black);
+  background: var(--win-gray);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.journal-dialog > header {
+  padding: 4px 6px;
+  background: var(--win-blue);
+  color: #fff;
+  font-weight: 700;
+}
+
+.journal-dialog__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 16px 14px;
+}
+
+.journal-dialog__body p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.journal-dialog__icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #222;
+  border-radius: 50%;
+  background: #f1ce4c;
+  font: 700 21px/1 Georgia, serif;
+}
+
+.journal-dialog footer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px 12px;
 }
 
 .feelings-app {
@@ -560,10 +711,48 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .mood-history__header strong {
   font-size: 15px;
+}
+
+.mood-history__ranges {
+  display: flex;
+  margin-left: auto;
+}
+
+.mood-history__ranges button {
+  height: 25px;
+  min-width: 52px;
+  padding: 2px 7px;
+  border-top: 2px solid var(--win-light);
+  border-left: 2px solid var(--win-light);
+  border-right: 2px solid var(--win-black);
+  border-bottom: 2px solid var(--win-black);
+  border-radius: 0;
+  background: var(--win-gray);
+}
+
+.mood-history__ranges button + button {
+  margin-left: -2px;
+}
+
+.mood-history__ranges button.is-selected {
+  position: relative;
+  border-top-color: var(--win-black);
+  border-left-color: var(--win-black);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  background: #dedede;
+  font-weight: 700;
+}
+
+.mood-history__ranges button:focus-visible {
+  z-index: 1;
+  outline: 1px dotted #000;
+  outline-offset: -5px;
 }
 
 .mood-history__list {
@@ -925,6 +1114,19 @@ button {
   .mood-history__content {
     grid-template-columns: 1fr;
     overflow-y: auto;
+  }
+
+  .mood-history__header {
+    flex-wrap: wrap;
+  }
+
+  .mood-history__ranges {
+    order: 3;
+    width: 100%;
+  }
+
+  .mood-history__ranges button {
+    flex: 1;
   }
 
   .mood-history__summary {

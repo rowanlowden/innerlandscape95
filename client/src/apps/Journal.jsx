@@ -1,22 +1,165 @@
 import { useState } from 'react'
 
-function Journal() {
+function formatEntryDate(date) {
+  return new Intl.DateTimeFormat([], {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(date)
+}
+
+function entryTitle(entry) {
+  const firstLine = entry.content.split('\n').find((line) => line.trim())
+  return firstLine?.trim().slice(0, 30) || 'Untitled entry'
+}
+
+function Journal({ entries, onCreateEntry, onUpdateEntry, onDeleteEntry }) {
   const [entry, setEntry] = useState('')
+  const [currentEntryId, setCurrentEntryId] = useState(null)
   const [status, setStatus] = useState('')
+  const [openMenu, setOpenMenu] = useState(null)
+  const [dialog, setDialog] = useState(null)
+
+  function closeMenu() {
+    setOpenMenu(null)
+  }
+
+  function startNewEntry() {
+    setEntry('')
+    setCurrentEntryId(null)
+    setStatus('New entry.')
+    closeMenu()
+  }
 
   function handleSave() {
-    setStatus(entry.trim() ? 'Saved for this session.' : 'Nothing to save yet.')
+    if (!entry.trim()) {
+      setStatus('Nothing to save yet.')
+      return
+    }
+
+    if (currentEntryId) {
+      onUpdateEntry(currentEntryId, entry)
+      setStatus('Changes saved for this session.')
+    } else {
+      const savedEntry = onCreateEntry(entry)
+      setCurrentEntryId(savedEntry.id)
+      setStatus('Entry saved for this session.')
+    }
+    closeMenu()
+  }
+
+  function openEntry(savedEntry) {
+    setEntry(savedEntry.content)
+    setCurrentEntryId(savedEntry.id)
+    setStatus(`Opened ${entryTitle(savedEntry)}.`)
+    closeMenu()
+  }
+
+  function confirmDelete() {
+    if (!currentEntryId) {
+      setStatus('Save or open an entry before deleting.')
+      closeMenu()
+      return
+    }
+
+    setDialog('delete')
+    closeMenu()
+  }
+
+  function deleteCurrentEntry() {
+    onDeleteEntry(currentEntryId)
+    setEntry('')
+    setCurrentEntryId(null)
+    setStatus('Entry deleted.')
+    setDialog(null)
   }
 
   return (
-    <div className="journal-app">
+    <div className="journal-app" onClick={() => openMenu && closeMenu()}>
       <div className="journal-app__menu" aria-label="Journal menu">
-        <button type="button"><u>F</u>ile</button>
-        <button type="button"><u>E</u>dit</button>
-        <button type="button"><u>H</u>elp</button>
+        <div className="journal-menu">
+          <button
+            className={openMenu === 'file' ? 'is-open' : ''}
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              setOpenMenu((menu) => menu === 'file' ? null : 'file')
+            }}
+            aria-expanded={openMenu === 'file'}
+          >
+            <u>F</u>ile
+          </button>
+          {openMenu === 'file' && (
+            <div className="journal-menu__dropdown" onClick={(event) => event.stopPropagation()}>
+              <button type="button" onClick={startNewEntry}><span><u>N</u>ew</span><kbd>Ctrl+N</kbd></button>
+              <button type="button" onClick={handleSave}><span><u>S</u>ave</span><kbd>Ctrl+S</kbd></button>
+            </div>
+          )}
+        </div>
+        <div className="journal-menu">
+          <button
+            className={openMenu === 'edit' ? 'is-open' : ''}
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              setOpenMenu((menu) => menu === 'edit' ? null : 'edit')
+            }}
+            aria-expanded={openMenu === 'edit'}
+          >
+            <u>E</u>dit
+          </button>
+          {openMenu === 'edit' && (
+            <div className="journal-menu__dropdown journal-menu__dropdown--entries" onClick={(event) => event.stopPropagation()}>
+              <div className="journal-menu__heading">Open saved entry</div>
+              {entries.length === 0 ? (
+                <div className="journal-menu__empty">No saved entries</div>
+              ) : entries.map((savedEntry) => (
+                <button
+                  className={currentEntryId === savedEntry.id ? 'is-current' : ''}
+                  key={savedEntry.id}
+                  type="button"
+                  onClick={() => openEntry(savedEntry)}
+                >
+                  <span>{entryTitle(savedEntry)}</span>
+                  <time>{formatEntryDate(savedEntry.updatedAt)}</time>
+                </button>
+              ))}
+              <div className="journal-menu__separator" />
+              <button type="button" onClick={confirmDelete} disabled={!currentEntryId}>
+                <span><u>D</u>elete current entry</span>
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="journal-menu">
+          <button
+            className={openMenu === 'help' ? 'is-open' : ''}
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              setOpenMenu((menu) => menu === 'help' ? null : 'help')
+            }}
+            aria-expanded={openMenu === 'help'}
+          >
+            <u>H</u>elp
+          </button>
+          {openMenu === 'help' && (
+            <div className="journal-menu__dropdown" onClick={(event) => event.stopPropagation()}>
+              <button type="button" onClick={() => {
+                setDialog('help')
+                closeMenu()
+              }}>
+                <span>Journal <u>H</u>elp</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="journal-app__body">
-        <label htmlFor="journal-entry">Today&apos;s entry</label>
+        <label htmlFor="journal-entry">
+          {currentEntryId ? 'Editing saved entry' : 'New journal entry'}
+        </label>
         <textarea
           id="journal-entry"
           value={entry}
@@ -32,6 +175,34 @@ function Journal() {
           <button className="win95-button" type="button" onClick={handleSave}>Save</button>
         </div>
       </div>
+
+      {dialog && (
+        <div className="journal-dialog-backdrop">
+          <section className="journal-dialog" role="dialog" aria-modal="true" aria-labelledby="journal-dialog-title">
+            <header id="journal-dialog-title">
+              {dialog === 'help' ? 'Journal Help' : 'Delete Entry'}
+            </header>
+            <div className="journal-dialog__body">
+              <span className="journal-dialog__icon" aria-hidden="true">
+                {dialog === 'help' ? '?' : '!'}
+              </span>
+              <p>
+                {dialog === 'help'
+                  ? 'Use File > New to start an entry. Save stores it for this session. Use Edit to reopen or delete a saved entry.'
+                  : 'Delete this saved journal entry? This cannot be undone.'}
+              </p>
+            </div>
+            <footer>
+              {dialog === 'delete' && (
+                <button className="win95-button" type="button" onClick={deleteCurrentEntry}>Delete</button>
+              )}
+              <button className="win95-button" type="button" onClick={() => setDialog(null)}>
+                {dialog === 'help' ? 'OK' : 'Cancel'}
+              </button>
+            </footer>
+          </section>
+        </div>
+      )}
     </div>
   )
 }

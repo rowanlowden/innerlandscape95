@@ -20,6 +20,7 @@ function Desktop() {
   const [feelingsState, setFeelingsState] = useState('closed')
   const [historyState, setHistoryState] = useState('closed')
   const [moodEntries, setMoodEntries] = useState([])
+  const [journalEntries, setJournalEntries] = useState([])
   const [activeWindow, setActiveWindow] = useState(null)
   const [isStartOpen, setIsStartOpen] = useState(false)
 
@@ -64,6 +65,27 @@ function Desktop() {
     ])
   }
 
+  function createJournalEntry(content) {
+    const savedEntry = {
+      id: `${Date.now()}-${journalEntries.length}`,
+      content,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    setJournalEntries((entries) => [savedEntry, ...entries])
+    return savedEntry
+  }
+
+  function updateJournalEntry(id, content) {
+    setJournalEntries((entries) => entries.map((entry) =>
+      entry.id === id ? { ...entry, content, updatedAt: new Date() } : entry,
+    ))
+  }
+
+  function deleteJournalEntry(id) {
+    setJournalEntries((entries) => entries.filter((entry) => entry.id !== id))
+  }
+
   return (
     <main className="desktop" onClick={() => isStartOpen && setIsStartOpen(false)}>
       <div className="desktop__texture" aria-hidden="true" />
@@ -99,7 +121,12 @@ function Desktop() {
             setActiveWindow(null)
           }}
         >
-          <Journal />
+          <Journal
+            entries={journalEntries}
+            onCreateEntry={createJournalEntry}
+            onUpdateEntry={updateJournalEntry}
+            onDeleteEntry={deleteJournalEntry}
+          />
         </Window>
       )}
 
