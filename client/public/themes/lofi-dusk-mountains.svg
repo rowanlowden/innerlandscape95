@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Lo-fi dusk mountain landscape</title>
+  <desc id="desc">A warm sunset over layered mountains and a quiet lake.</desc>
+  <rect width="1600" height="900" fill="#4c385e"/>
+  <rect width="1600" height="585" fill="#c47b70"/>
+  <rect y="585" width="1600" height="315" fill="#263c50"/>
+  <circle cx="800" cy="300" r="132" fill="#f6c889"/>
+  <path d="M0 620 260 360l160 170 250-290 220 240 200-205 170 185 170-145 170 305Z" fill="#4b3e63"/>
+  <path d="m180 610 240-220 70 75 180-225 105 125 88-92 135 155 180-190 195 230 207 162Z" fill="#322f50"/>
+  <path d="M0 680c250-48 390-35 590 8s375 45 570-6 305-47 440 2v216H0Z" fill="#1e3548"/>
+  <path d="M0 754c250-25 440-16 650 22s390 35 560-6 275-35 390 0v130H0Z" fill="#2c5360"/>
+  <g stroke="#87b0aa" stroke-width="4" opacity=".45">
+    <path d="M170 790h285M210 812h370M1090 780h300M1010 808h390M530 858h470"/>
+  </g>
+  <g fill="#1e3548">
+    <path d="M95 730h16v-95h10l-18-28-18 28h10Z"/>
+    <path d="M1330 708h18v-115h12l-21-34-21 34h12Z"/>
+    <path d="M1460 760h14v-80h9l-16-25-16 25h9Z"/>
+    <path d="M360 715h14v-88h10l-17-27-17 27h10Z"/>
+  </g>
+  <g fill="#f6c889" opacity=".65">
+    <rect x="100" y="120" width="7" height="7"/><rect x="1450" y="165" width="6" height="6"/>
+    <rect x="1260" y="92" width="5" height="5"/><rect x="480" y="150" width="6" height="6"/>
+  </g>
+</svg>

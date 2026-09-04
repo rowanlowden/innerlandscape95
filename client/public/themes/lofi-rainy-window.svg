@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Lo-fi rainy window landscape</title>
+  <desc id="desc">A blue evening city viewed through a rainy window.</desc>
+  <rect width="1600" height="900" fill="#182d4b"/>
+  <rect width="1600" height="570" fill="#31567a"/>
+  <rect y="570" width="1600" height="330" fill="#162238"/>
+  <circle cx="1240" cy="190" r="92" fill="#f3d9a0" opacity=".9"/>
+  <path d="M0 610h210V470h90v140h115V390h105v220h140V500h80v110h150V430h130v180h125V350h125v260h160V455h95v155h180V400h90v210h120v290H0Z" fill="#111b31"/>
+  <path d="M0 720c210-65 380-52 570 5s370 58 550-4 310-72 480-8v187H0Z" fill="#0d1728"/>
+  <path d="M710 900V610h170v290M922 900V570h210v330" fill="#111827"/>
+  <g fill="#edc76d" opacity=".8">
+    <rect x="255" y="523" width="15" height="28"/><rect x="255" y="567" width="15" height="28"/>
+    <rect x="438" y="442" width="18" height="32"/><rect x="483" y="501" width="18" height="32"/>
+    <rect x="965" y="628" width="20" height="34"/><rect x="1040" y="628" width="20" height="34"/>
+    <rect x="1302" y="414" width="18" height="30"/><rect x="1370" y="500" width="18" height="30"/>
+  </g>
+  <g stroke="#b9d8ed" stroke-width="7" opacity=".42">
+    <path d="M190 50l-80 220M340 0l-100 275M570 80L470 360M820 0L700 330M1080 30L960 320M1420 0l-105 300"/>
+    <path d="M290 380l-70 190M670 350l-70 190M1200 340l-70 190M1510 390l-85 205"/>
+  </g>
+  <g fill="#f3d9a0" opacity=".5">
+    <rect x="76" y="766" width="42" height="5"/><rect x="125" y="766" width="18" height="5"/>
+    <rect x="1190" y="743" width="56" height="5"/><rect x="1260" y="743" width="22" height="5"/>
+  </g>
+</svg>

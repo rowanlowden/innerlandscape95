@@ -23,6 +23,20 @@ const desktopThemes = [
     description: 'A quiet green desktop inspired by CRT palettes.',
     color: '#3f6b58',
   },
+  {
+    id: 'lofi-rainy-window',
+    name: 'Rainy Window',
+    description: 'A blue city scene for a mellow writing session.',
+    color: '#31567a',
+    image: '/themes/lofi-rainy-window.svg',
+  },
+  {
+    id: 'lofi-dusk-mountains',
+    name: 'Dusk Mountains',
+    description: 'A warm mountain horizon with a quiet lake.',
+    color: '#c47b70',
+    image: '/themes/lofi-dusk-mountains.svg',
+  },
 ]
 
 function ControlPanel({ selectedTheme, onSelectTheme }) {
@@ -44,7 +58,10 @@ function ControlPanel({ selectedTheme, onSelectTheme }) {
           >
             <span
               className="control-panel__swatch"
-              style={{ backgroundColor: theme.color }}
+              style={{
+                backgroundColor: theme.color,
+                backgroundImage: theme.image ? `url(${theme.image})` : undefined,
+              }}
               aria-hidden="true"
             />
             <span className="control-panel__theme-copy">

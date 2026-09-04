@@ -42,6 +42,20 @@ button {
   --desktop-teal: #3f6b58;
 }
 
+.desktop--lofi-rainy-window,
+.desktop--lofi-dusk-mountains {
+  background-position: center;
+  background-size: cover;
+}
+
+.desktop--lofi-rainy-window {
+  background-image: url('/themes/lofi-rainy-window.svg');
+}
+
+.desktop--lofi-dusk-mountains {
+  background-image: url('/themes/lofi-dusk-mountains.svg');
+}
+
 .desktop__texture {
   position: absolute;
   inset: 0 0 38px;
@@ -514,6 +528,42 @@ button {
 .journal-app__actions span {
   margin-right: auto;
   color: #333;
+}
+
+.journal-prompt-button {
+  width: 29px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-top: 2px solid var(--win-light);
+  border-left: 2px solid var(--win-light);
+  border-right: 2px solid var(--win-black);
+  border-bottom: 2px solid var(--win-black);
+  border-radius: 0;
+  background: var(--win-gray);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.journal-prompt-button:hover,
+.journal-prompt-button:focus-visible {
+  outline: 1px dotted var(--win-black);
+  outline-offset: -4px;
+}
+
+.journal-prompt-button:active {
+  border-top-color: var(--win-black);
+  border-left-color: var(--win-black);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+}
+
+.journal-prompt-hint {
+  margin-right: 0;
+  color: #333;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .journal-dialog-backdrop {

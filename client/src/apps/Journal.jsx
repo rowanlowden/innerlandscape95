@@ -1,5 +1,18 @@
 import { useState } from 'react'
 
+const journalingPrompts = [
+  'What is taking up the most space in your mind today?',
+  'What felt lighter than expected today?',
+  'What do you need to hear right now?',
+  'Describe one small moment you want to remember.',
+  'What are you learning about yourself lately?',
+  'What would make tomorrow feel a little kinder?',
+]
+
+function getRandomPrompt() {
+  return journalingPrompts[Math.floor(Math.random() * journalingPrompts.length)]
+}
+
 function formatEntryDate(date) {
   return new Intl.DateTimeFormat([], {
     month: 'short',
@@ -16,7 +29,7 @@ function entryTitle(entry) {
 
 function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDeleteEntry, onOpenSavedEntry }) {
   const initialEntry = entries.find((item) => item.id === initialEntryId)
-  const [entry, setEntry] = useState(initialEntry?.content || '')
+  const [entry, setEntry] = useState(() => initialEntry?.content || getRandomPrompt())
   const [currentEntryId, setCurrentEntryId] = useState(initialEntry?.id || null)
   const [status, setStatus] = useState(initialEntry ? `Editing ${entryTitle(initialEntry)}.` : '')
   const [openMenu, setOpenMenu] = useState(null)
@@ -27,10 +40,16 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
   }
 
   function startNewEntry() {
-    setEntry('')
+    setEntry(getRandomPrompt())
     setCurrentEntryId(null)
     setStatus('New entry.')
     closeMenu()
+  }
+
+  function generatePrompt() {
+    setEntry(getRandomPrompt())
+    setCurrentEntryId(null)
+    setStatus('New prompt ready.')
   }
 
   function handleSave() {
@@ -166,11 +185,20 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
             setEntry(event.target.value)
             setStatus('')
           }}
-          placeholder="Write what is on your mind..."
           autoFocus
         />
         <div className="journal-app__actions">
           <span role="status">{status}</span>
+          <button
+            className="journal-prompt-button"
+            type="button"
+            onClick={generatePrompt}
+            aria-label="Generate a new journaling prompt"
+            title="Generate a new journaling prompt"
+          >
+            ⚄
+          </button>
+          <span className="journal-prompt-hint">Click the dice for a new prompt</span>
           <button className="win95-button" type="button" onClick={handleSave}>Save</button>
         </div>
       </div>
