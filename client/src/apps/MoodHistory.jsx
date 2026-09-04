@@ -7,6 +7,47 @@ const ranges = [
   { label: '30 Days', days: 30 },
 ]
 
+const trendRanges = [
+  { id: 'week', label: 'Week', days: 7 },
+  { id: 'month', label: 'Month', days: 35 },
+]
+
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+}
+
+function formatTrendLabel(date, range) {
+  return new Intl.DateTimeFormat([], range.id === 'week'
+    ? { weekday: 'narrow' }
+    : { month: 'short', day: 'numeric' }).format(date)
+}
+
+function getTrendBuckets(entries, range) {
+  const today = startOfDay(new Date())
+  const bucketCount = range.id === 'week' ? 7 : 5
+  const bucketDays = range.id === 'week' ? 1 : 7
+  const start = new Date(today)
+  start.setDate(start.getDate() - (range.days - 1))
+
+  return Array.from({ length: bucketCount }, (_, index) => {
+    const bucketStart = new Date(start)
+    bucketStart.setDate(bucketStart.getDate() + (index * bucketDays))
+    const bucketEnd = new Date(bucketStart)
+    bucketEnd.setDate(bucketEnd.getDate() + bucketDays)
+    const counts = feelingGroups.map((group) => ({
+      ...group,
+      count: entries.filter((entry) => entry.group === group.name
+        && entry.loggedAt >= bucketStart && entry.loggedAt < bucketEnd).length,
+    }))
+
+    return {
+      label: formatTrendLabel(bucketStart, range),
+      total: counts.reduce((total, group) => total + group.count, 0),
+      counts,
+    }
+  })
+}
+
 function formatLoggedAt(date) {
   return new Intl.DateTimeFormat([], {
     month: 'short',
@@ -18,6 +59,7 @@ function formatLoggedAt(date) {
 
 function MoodHistory({ entries }) {
   const [selectedRange, setSelectedRange] = useState(ranges[1])
+  const [trendRange, setTrendRange] = useState(trendRanges[0])
   const [referenceTime, setReferenceTime] = useState(() => Date.now())
   const rangeStart = referenceTime - selectedRange.days * 24 * 60 * 60 * 1000
   const filteredEntries = entries.filter((entry) => entry.loggedAt.getTime() >= rangeStart)
@@ -36,6 +78,8 @@ function MoodHistory({ entries }) {
   const chartStyle = filteredEntries.length > 0
     ? { background: `conic-gradient(${chartSegments.join(', ')})` }
     : undefined
+  const trendBuckets = getTrendBuckets(entries, trendRange)
+  const trendMaximum = Math.max(1, ...trendBuckets.map((bucket) => bucket.total))
 
   return (
     <div className="mood-history">
@@ -108,6 +152,47 @@ function MoodHistory({ entries }) {
           )}
         </div>
       </div>
+      <section className="mood-history__trends" aria-labelledby="mood-trends-heading">
+        <header>
+          <strong id="mood-trends-heading">Mood Trends</strong>
+          <div className="mood-history__trend-ranges" role="group" aria-label="Mood trend period">
+            {trendRanges.map((range) => (
+              <button
+                className={trendRange.id === range.id ? 'is-selected' : ''}
+                key={range.id}
+                type="button"
+                onClick={() => setTrendRange(range)}
+                aria-pressed={trendRange.id === range.id}
+              >
+                {range.label}
+              </button>
+            ))}
+          </div>
+        </header>
+        <div
+          className="mood-history__trend-chart"
+          role="img"
+          aria-label={`${trendRange.label} mood pattern chart`}
+          style={{ '--trend-columns': trendBuckets.length }}
+        >
+          {trendBuckets.map((bucket, index) => (
+            <div className="mood-history__trend-column" key={`${bucket.label}-${index}`}>
+              <div className="mood-history__trend-track" title={`${bucket.label}: ${bucket.total} mood ${bucket.total === 1 ? 'entry' : 'entries'}`}>
+                <div className="mood-history__trend-stack" style={{ height: `${(bucket.total / trendMaximum) * 100}%` }}>
+                  {bucket.counts.filter((group) => group.count > 0).map((group) => (
+                    <span
+                      key={group.name}
+                      style={{ backgroundColor: group.color, flexGrow: group.count }}
+                      title={`${group.shortName}: ${group.count}`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <span>{bucket.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
       <div className="mood-history__footer">
         Showing the last {selectedRange.label.toLowerCase()} · Stored for this session only
       </div>

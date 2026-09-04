@@ -35,6 +35,7 @@ function Journal({
   onClearMood,
   onCreateEntry,
   onUpdateEntry,
+  onSave,
   onDeleteEntry,
   onOpenSavedEntry,
 }) {
@@ -78,6 +79,7 @@ function Journal({
       setCurrentEntryId(savedEntry.id)
       setStatus('Entry saved for this session.')
     }
+    onSave()
     closeMenu()
   }
 

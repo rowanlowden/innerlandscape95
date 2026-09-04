@@ -3,6 +3,7 @@ const STORAGE_KEYS = {
   moodEntries: 'innerlandscape95.moodEntries',
   desktopTheme: 'innerlandscape95.desktopTheme',
   desktopIconSize: 'innerlandscape95.desktopIconSize',
+  systemSoundsEnabled: 'innerlandscape95.systemSoundsEnabled',
   deletedJournalEntries: 'innerlandscape95.deletedJournalEntries',
 }
 

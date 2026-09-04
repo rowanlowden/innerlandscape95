@@ -45,7 +45,14 @@ const iconSizes = [
   { id: 'large', name: 'Large' },
 ]
 
-function ControlPanel({ selectedTheme, onSelectTheme, iconSize, onSelectIconSize }) {
+function ControlPanel({
+  selectedTheme,
+  onSelectTheme,
+  iconSize,
+  onSelectIconSize,
+  systemSoundsEnabled,
+  onToggleSystemSounds,
+}) {
   return (
     <div className="control-panel">
       <div className="control-panel__header">
@@ -94,8 +101,19 @@ function ControlPanel({ selectedTheme, onSelectTheme, iconSize, onSelectIconSize
           ))}
         </div>
       </section>
+      <label className="control-panel__sound-setting">
+        <span>
+          <strong>Classic System Sounds</strong>
+          <span>Play subtle sounds for desktop actions.</span>
+        </span>
+        <input
+          type="checkbox"
+          checked={systemSoundsEnabled}
+          onChange={(event) => onToggleSystemSounds(event.target.checked)}
+        />
+      </label>
       <div className="control-panel__status" role="status">
-        Current desktop: {desktopThemes.find((theme) => theme.id === selectedTheme)?.name} · {iconSizes.find((size) => size.id === iconSize)?.name} icons
+        Current desktop: {desktopThemes.find((theme) => theme.id === selectedTheme)?.name} · {iconSizes.find((size) => size.id === iconSize)?.name} icons · Sounds {systemSoundsEnabled ? 'on' : 'off'}
       </div>
     </div>
   )

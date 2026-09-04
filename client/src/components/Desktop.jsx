@@ -7,6 +7,7 @@ import MoodHistory from '../apps/MoodHistory'
 import RecycleBin from '../apps/RecycleBin'
 import ReflectionSummary from '../apps/ReflectionSummary'
 import { readEntries, readValue, STORAGE_KEYS, writeValue } from '../data/localStorage'
+import { playSystemSound } from '../data/systemSounds'
 import DesktopIcon from './DesktopIcon'
 import Taskbar from './Taskbar'
 import Window from './Window'
@@ -16,8 +17,8 @@ const desktopApps = [
   { label: 'Blog', icon: 'thoughts' },
   { label: 'Feelings', icon: 'feelings' },
   { label: 'Mood History', icon: 'history' },
-  { label: 'Control Panel', icon: 'control' },
   { label: 'Reflection Summary', icon: 'reflection' },
+  { label: 'Control Panel', icon: 'control' },
   { label: 'Recycle Bin', icon: 'recycle' },
 ]
 
@@ -48,6 +49,7 @@ function Desktop() {
   const [reflectionState, setReflectionState] = useState('closed')
   const [desktopTheme, setDesktopTheme] = useState(() => readValue(STORAGE_KEYS.desktopTheme, 'teal'))
   const [desktopIconSize, setDesktopIconSize] = useState(() => readValue(STORAGE_KEYS.desktopIconSize, 'medium'))
+  const [systemSoundsEnabled, setSystemSoundsEnabled] = useState(() => readValue(STORAGE_KEYS.systemSoundsEnabled, false))
   const [moodEntries, setMoodEntries] = useState(() => readEntries(
     STORAGE_KEYS.moodEntries,
     ['loggedAt'],
@@ -73,6 +75,10 @@ function Desktop() {
   }, [desktopIconSize])
 
   useEffect(() => {
+    writeValue(STORAGE_KEYS.systemSoundsEnabled, systemSoundsEnabled)
+  }, [systemSoundsEnabled])
+
+  useEffect(() => {
     writeValue(STORAGE_KEYS.moodEntries, moodEntries)
   }, [moodEntries])
 
@@ -85,6 +91,7 @@ function Desktop() {
   }, [deletedJournalEntries])
 
   function openJournal() {
+    playSound('open')
     setJournalState('open')
     setJournalEntryToEdit(null)
     setJournalMood(null)
@@ -98,17 +105,20 @@ function Desktop() {
     setJournalEntryToEdit(id)
     setJournalMood(savedEntry?.mood || null)
     setActiveWindow('journal')
+    playSound('open')
   }
 
   function openFeelings() {
     setFeelingsState('open')
     setIsPickingJournalMood(false)
     setActiveWindow('feelings')
+    playSound('open')
   }
 
   function openHistory() {
     setHistoryState('open')
     setActiveWindow('history')
+    playSound('open')
   }
 
   function openBlog(entryId = null) {
@@ -116,24 +126,37 @@ function Desktop() {
     setSelectedBlogEntryId(entryId)
     setActiveWindow('blog')
     setIsStartOpen(false)
+    playSound('open')
   }
 
   function openControlPanel() {
     setControlPanelState('open')
     setActiveWindow('control-panel')
     setIsStartOpen(false)
+    playSound('open')
   }
 
   function openRecycleBin() {
     setRecycleBinState('open')
     setActiveWindow('recycle-bin')
     setIsStartOpen(false)
+    playSound('open')
   }
 
   function openReflectionSummary() {
     setReflectionState('open')
     setActiveWindow('reflection-summary')
     setIsStartOpen(false)
+    playSound('open')
+  }
+
+  function playSound(name) {
+    if (systemSoundsEnabled) playSystemSound(name)
+  }
+
+  function selectDesktopTheme(theme) {
+    setDesktopTheme(theme)
+    playSound('theme')
   }
 
   function toggleWindow(id, state, setState) {
@@ -279,6 +302,7 @@ function Desktop() {
           isActive={activeWindow === 'journal'}
           onFocus={() => setActiveWindow('journal')}
           onMinimize={() => {
+            playSound('minimize')
             setJournalState('minimized')
             setActiveWindow(null)
           }}
@@ -296,6 +320,7 @@ function Desktop() {
             onClearMood={() => setJournalMood(null)}
             onCreateEntry={createJournalEntry}
             onUpdateEntry={updateJournalEntry}
+            onSave={() => playSound('save')}
             onDeleteEntry={deleteJournalEntry}
             onOpenSavedEntry={openBlog}
           />
@@ -311,6 +336,7 @@ function Desktop() {
           initialPosition={{ x: 230, y: 80 }}
           onFocus={() => setActiveWindow('blog')}
           onMinimize={() => {
+            playSound('minimize')
             setBlogState('minimized')
             setActiveWindow(null)
           }}
@@ -336,6 +362,7 @@ function Desktop() {
           initialPosition={{ x: 210, y: 90 }}
           onFocus={() => setActiveWindow('feelings')}
           onMinimize={() => {
+            playSound('minimize')
             setFeelingsState('minimized')
             setActiveWindow(null)
           }}
@@ -362,6 +389,7 @@ function Desktop() {
           initialPosition={{ x: 280, y: 120 }}
           onFocus={() => setActiveWindow('history')}
           onMinimize={() => {
+            playSound('minimize')
             setHistoryState('minimized')
             setActiveWindow(null)
           }}
@@ -383,6 +411,7 @@ function Desktop() {
           initialPosition={{ x: 320, y: 100 }}
           onFocus={() => setActiveWindow('control-panel')}
           onMinimize={() => {
+            playSound('minimize')
             setControlPanelState('minimized')
             setActiveWindow(null)
           }}
@@ -393,9 +422,11 @@ function Desktop() {
         >
           <ControlPanel
             selectedTheme={desktopTheme}
-            onSelectTheme={setDesktopTheme}
+            onSelectTheme={selectDesktopTheme}
             iconSize={desktopIconSize}
             onSelectIconSize={setDesktopIconSize}
+            systemSoundsEnabled={systemSoundsEnabled}
+            onToggleSystemSounds={setSystemSoundsEnabled}
           />
         </Window>
       )}
@@ -409,6 +440,7 @@ function Desktop() {
           initialPosition={{ x: 350, y: 120 }}
           onFocus={() => setActiveWindow('recycle-bin')}
           onMinimize={() => {
+            playSound('minimize')
             setRecycleBinState('minimized')
             setActiveWindow(null)
           }}
@@ -434,6 +466,7 @@ function Desktop() {
           initialPosition={{ x: 250, y: 100 }}
           onFocus={() => setActiveWindow('reflection-summary')}
           onMinimize={() => {
+            playSound('minimize')
             setReflectionState('minimized')
             setActiveWindow(null)
           }}

@@ -56,8 +56,9 @@ function ReflectionSummary({ journalEntries, moodEntries }) {
       .sort((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]))
       .slice(0, 5)
     const topDays = highestCounts(dayCounts).map((day) => formatDay(new Date(day)))
+    const topDayCount = Math.max(...dayCounts.values(), 0)
 
-    return { start, weeklyJournalEntries, weeklyMoodEntries, moodCounts, topMood, topWords, topDays }
+    return { start, weeklyJournalEntries, moodCounts, topMood, topWords, topDays, topDayCount }
   }, [journalEntries, moodEntries])
 
   return (
@@ -97,7 +98,7 @@ function ReflectionSummary({ journalEntries, moodEntries }) {
           ) : (
             <>
               <strong>{summary.topDays.join(' and ')}</strong>
-              <span>{summary.weeklyJournalEntries.length} {summary.weeklyJournalEntries.length === 1 ? 'entry' : 'entries'} saved this week</span>
+              <span>{summary.topDayCount} {summary.topDayCount === 1 ? 'entry' : 'entries'} saved on that day</span>
             </>
           )}
         </section>
