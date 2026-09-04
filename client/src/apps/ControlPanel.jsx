@@ -39,7 +39,13 @@ const desktopThemes = [
   },
 ]
 
-function ControlPanel({ selectedTheme, onSelectTheme }) {
+const iconSizes = [
+  { id: 'small', name: 'Small' },
+  { id: 'medium', name: 'Medium' },
+  { id: 'large', name: 'Large' },
+]
+
+function ControlPanel({ selectedTheme, onSelectTheme, iconSize, onSelectIconSize }) {
   return (
     <div className="control-panel">
       <div className="control-panel__header">
@@ -71,8 +77,25 @@ function ControlPanel({ selectedTheme, onSelectTheme }) {
           </button>
         ))}
       </div>
+      <section className="control-panel__icon-size" aria-labelledby="icon-size-heading">
+        <strong id="icon-size-heading">Desktop Icon Size</strong>
+        <div role="radiogroup" aria-label="Desktop icon size">
+          {iconSizes.map((size) => (
+            <button
+              className={iconSize === size.id ? 'is-selected' : ''}
+              key={size.id}
+              type="button"
+              role="radio"
+              aria-checked={iconSize === size.id}
+              onClick={() => onSelectIconSize(size.id)}
+            >
+              {size.name}
+            </button>
+          ))}
+        </div>
+      </section>
       <div className="control-panel__status" role="status">
-        Current desktop: {desktopThemes.find((theme) => theme.id === selectedTheme)?.name}
+        Current desktop: {desktopThemes.find((theme) => theme.id === selectedTheme)?.name} · {iconSizes.find((size) => size.id === iconSize)?.name} icons
       </div>
     </div>
   )

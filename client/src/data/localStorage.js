@@ -2,6 +2,8 @@ const STORAGE_KEYS = {
   journalEntries: 'innerlandscape95.journalEntries',
   moodEntries: 'innerlandscape95.moodEntries',
   desktopTheme: 'innerlandscape95.desktopTheme',
+  desktopIconSize: 'innerlandscape95.desktopIconSize',
+  deletedJournalEntries: 'innerlandscape95.deletedJournalEntries',
 }
 
 function readValue(key, fallback) {

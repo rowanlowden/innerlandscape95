@@ -27,7 +27,17 @@ function entryTitle(entry) {
   return firstLine?.trim().slice(0, 30) || 'Untitled entry'
 }
 
-function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDeleteEntry, onOpenSavedEntry }) {
+function Journal({
+  entries,
+  initialEntryId,
+  selectedMood,
+  onSelectMood,
+  onClearMood,
+  onCreateEntry,
+  onUpdateEntry,
+  onDeleteEntry,
+  onOpenSavedEntry,
+}) {
   const initialEntry = entries.find((item) => item.id === initialEntryId)
   const [entry, setEntry] = useState(() => initialEntry?.content || getRandomPrompt())
   const [currentEntryId, setCurrentEntryId] = useState(initialEntry?.id || null)
@@ -42,6 +52,7 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
   function startNewEntry() {
     setEntry(getRandomPrompt())
     setCurrentEntryId(null)
+    onClearMood()
     setStatus('New entry.')
     closeMenu()
   }
@@ -49,6 +60,7 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
   function generatePrompt() {
     setEntry(getRandomPrompt())
     setCurrentEntryId(null)
+    onClearMood()
     setStatus('New prompt ready.')
   }
 
@@ -59,10 +71,10 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
     }
 
     if (currentEntryId) {
-      onUpdateEntry(currentEntryId, entry)
+      onUpdateEntry(currentEntryId, entry, selectedMood)
       setStatus('Changes saved for this session.')
     } else {
-      const savedEntry = onCreateEntry(entry)
+      const savedEntry = onCreateEntry(entry, selectedMood)
       setCurrentEntryId(savedEntry.id)
       setStatus('Entry saved for this session.')
     }
@@ -89,6 +101,7 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
     onDeleteEntry(currentEntryId)
     setEntry('')
     setCurrentEntryId(null)
+    onClearMood()
     setStatus('Entry deleted.')
     setDialog(null)
   }
@@ -187,6 +200,19 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
           }}
           autoFocus
         />
+        <div className="journal-app__mood">
+          {selectedMood ? (
+            <span className="journal-app__mood-selection">
+              <span style={{ backgroundColor: selectedMood.color }} aria-hidden="true" />
+              {selectedMood.name}
+            </span>
+          ) : (
+            <span>No mood attached</span>
+          )}
+          <button className="win95-button" type="button" onClick={onSelectMood}>
+            Log mood
+          </button>
+        </div>
         <div className="journal-app__actions">
           <span role="status">{status}</span>
           <button
@@ -216,12 +242,12 @@ function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDele
               <p>
                 {dialog === 'help'
                   ? 'Use File > New to start an entry. Save stores it for this session. Use Edit to reopen or delete a saved entry.'
-                  : 'Delete this saved journal entry? This cannot be undone.'}
+                  : 'Move this saved journal entry to the Recycle Bin? It can be restored until permanently deleted.'}
               </p>
             </div>
             <footer>
               {dialog === 'delete' && (
-                <button className="win95-button" type="button" onClick={deleteCurrentEntry}>Delete</button>
+                <button className="win95-button" type="button" onClick={deleteCurrentEntry}>Move to Recycle Bin</button>
               )}
               <button className="win95-button" type="button" onClick={() => setDialog(null)}>
                 {dialog === 'help' ? 'OK' : 'Cancel'}

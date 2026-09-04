@@ -1,11 +1,16 @@
 import { useState } from 'react'
 import { feelingGroups, feelings } from '../data/feelings'
 
-function Feelings({ onLogFeeling }) {
+function Feelings({ onLogFeeling, onSelectJournalMood, selectedJournalMood }) {
   const [selectedFeeling, setSelectedFeeling] = useState(null)
+  const isJournalPicker = Boolean(onSelectJournalMood)
 
   function chooseFeeling(feeling) {
     setSelectedFeeling(feeling)
+    if (isJournalPicker) {
+      onSelectJournalMood(feeling)
+      return
+    }
     onLogFeeling(feeling)
   }
 
@@ -28,10 +33,10 @@ function Feelings({ onLogFeeling }) {
               {feelings.filter((feeling) => feeling.group === group.name).map((feeling) => (
                 <button
                   key={feeling.name}
-                  className={selectedFeeling?.name === feeling.name ? 'is-selected' : ''}
+                  className={(selectedFeeling || selectedJournalMood)?.name === feeling.name ? 'is-selected' : ''}
                   type="button"
                   onClick={() => chooseFeeling(feeling)}
-                  aria-pressed={selectedFeeling?.name === feeling.name}
+                  aria-pressed={(selectedFeeling || selectedJournalMood)?.name === feeling.name}
                 >
                   {feeling.name}
                 </button>
@@ -42,8 +47,12 @@ function Feelings({ onLogFeeling }) {
       </div>
       <div className="feelings-app__status" role="status">
         {selectedFeeling
-          ? `${selectedFeeling.name} was added to Mood History.`
-          : 'No feeling logged yet.'}
+          ? isJournalPicker
+            ? `${selectedFeeling.name} is attached to the journal entry.`
+            : `${selectedFeeling.name} was added to Mood History.`
+          : isJournalPicker
+            ? 'Choose a feeling to attach to this journal entry.'
+            : 'No feeling logged yet.'}
       </div>
     </div>
   )
