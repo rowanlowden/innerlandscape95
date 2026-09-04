@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Blog from '../apps/Blog'
 import ControlPanel from '../apps/ControlPanel'
 import Feelings from '../apps/Feelings'
 import Journal from '../apps/Journal'
 import MoodHistory from '../apps/MoodHistory'
+import { readEntries, readValue, STORAGE_KEYS, writeValue } from '../data/localStorage'
 import DesktopIcon from './DesktopIcon'
 import Taskbar from './Taskbar'
 import Window from './Window'
@@ -23,13 +24,31 @@ function Desktop() {
   const [blogState, setBlogState] = useState('closed')
   const [historyState, setHistoryState] = useState('closed')
   const [controlPanelState, setControlPanelState] = useState('closed')
-  const [desktopTheme, setDesktopTheme] = useState('teal')
-  const [moodEntries, setMoodEntries] = useState([])
-  const [journalEntries, setJournalEntries] = useState([])
+  const [desktopTheme, setDesktopTheme] = useState(() => readValue(STORAGE_KEYS.desktopTheme, 'teal'))
+  const [moodEntries, setMoodEntries] = useState(() => readEntries(
+    STORAGE_KEYS.moodEntries,
+    ['loggedAt'],
+  ))
+  const [journalEntries, setJournalEntries] = useState(() => readEntries(
+    STORAGE_KEYS.journalEntries,
+    ['createdAt', 'updatedAt'],
+  ))
   const [selectedBlogEntryId, setSelectedBlogEntryId] = useState(null)
   const [journalEntryToEdit, setJournalEntryToEdit] = useState(null)
   const [activeWindow, setActiveWindow] = useState(null)
   const [isStartOpen, setIsStartOpen] = useState(false)
+
+  useEffect(() => {
+    writeValue(STORAGE_KEYS.desktopTheme, desktopTheme)
+  }, [desktopTheme])
+
+  useEffect(() => {
+    writeValue(STORAGE_KEYS.moodEntries, moodEntries)
+  }, [moodEntries])
+
+  useEffect(() => {
+    writeValue(STORAGE_KEYS.journalEntries, journalEntries)
+  }, [journalEntries])
 
   function openJournal() {
     setJournalState('open')
