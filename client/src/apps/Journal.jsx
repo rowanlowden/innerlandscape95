@@ -14,10 +14,11 @@ function entryTitle(entry) {
   return firstLine?.trim().slice(0, 30) || 'Untitled entry'
 }
 
-function Journal({ entries, onCreateEntry, onUpdateEntry, onDeleteEntry }) {
-  const [entry, setEntry] = useState('')
-  const [currentEntryId, setCurrentEntryId] = useState(null)
-  const [status, setStatus] = useState('')
+function Journal({ entries, initialEntryId, onCreateEntry, onUpdateEntry, onDeleteEntry, onOpenSavedEntry }) {
+  const initialEntry = entries.find((item) => item.id === initialEntryId)
+  const [entry, setEntry] = useState(initialEntry?.content || '')
+  const [currentEntryId, setCurrentEntryId] = useState(initialEntry?.id || null)
+  const [status, setStatus] = useState(initialEntry ? `Editing ${entryTitle(initialEntry)}.` : '')
   const [openMenu, setOpenMenu] = useState(null)
   const [dialog, setDialog] = useState(null)
 
@@ -50,9 +51,7 @@ function Journal({ entries, onCreateEntry, onUpdateEntry, onDeleteEntry }) {
   }
 
   function openEntry(savedEntry) {
-    setEntry(savedEntry.content)
-    setCurrentEntryId(savedEntry.id)
-    setStatus(`Opened ${entryTitle(savedEntry)}.`)
+    onOpenSavedEntry(savedEntry.id)
     closeMenu()
   }
 

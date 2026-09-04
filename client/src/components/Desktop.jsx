@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import Blog from '../apps/Blog'
+import ControlPanel from '../apps/ControlPanel'
 import Feelings from '../apps/Feelings'
 import Journal from '../apps/Journal'
 import MoodHistory from '../apps/MoodHistory'
@@ -8,8 +10,8 @@ import Window from './Window'
 
 const desktopApps = [
   { label: 'Journal', icon: 'journal' },
+  { label: 'Blog', icon: 'thoughts' },
   { label: 'Feelings', icon: 'feelings' },
-  { label: 'Thoughts', icon: 'thoughts' },
   { label: 'Mood History', icon: 'history' },
   { label: 'Control Panel', icon: 'control' },
   { label: 'Recycle Bin', icon: 'recycle' },
@@ -18,16 +20,28 @@ const desktopApps = [
 function Desktop() {
   const [journalState, setJournalState] = useState('closed')
   const [feelingsState, setFeelingsState] = useState('closed')
+  const [blogState, setBlogState] = useState('closed')
   const [historyState, setHistoryState] = useState('closed')
+  const [controlPanelState, setControlPanelState] = useState('closed')
+  const [desktopTheme, setDesktopTheme] = useState('teal')
   const [moodEntries, setMoodEntries] = useState([])
   const [journalEntries, setJournalEntries] = useState([])
+  const [selectedBlogEntryId, setSelectedBlogEntryId] = useState(null)
+  const [journalEntryToEdit, setJournalEntryToEdit] = useState(null)
   const [activeWindow, setActiveWindow] = useState(null)
   const [isStartOpen, setIsStartOpen] = useState(false)
 
   function openJournal() {
     setJournalState('open')
+    setJournalEntryToEdit(null)
     setActiveWindow('journal')
     setIsStartOpen(false)
+  }
+
+  function openJournalEntry(id) {
+    setJournalState('open')
+    setJournalEntryToEdit(id)
+    setActiveWindow('journal')
   }
 
   function openFeelings() {
@@ -38,6 +52,19 @@ function Desktop() {
   function openHistory() {
     setHistoryState('open')
     setActiveWindow('history')
+  }
+
+  function openBlog(entryId = null) {
+    setBlogState('open')
+    setSelectedBlogEntryId(entryId)
+    setActiveWindow('blog')
+    setIsStartOpen(false)
+  }
+
+  function openControlPanel() {
+    setControlPanelState('open')
+    setActiveWindow('control-panel')
+    setIsStartOpen(false)
   }
 
   function toggleWindow(id, state, setState) {
@@ -87,7 +114,7 @@ function Desktop() {
   }
 
   return (
-    <main className="desktop" onClick={() => isStartOpen && setIsStartOpen(false)}>
+    <main className={`desktop desktop--${desktopTheme}`} onClick={() => isStartOpen && setIsStartOpen(false)}>
       <div className="desktop__texture" aria-hidden="true" />
       <div className="desktop__icons" aria-label="Desktop programs">
         {desktopApps.map((app) => (
@@ -98,7 +125,9 @@ function Desktop() {
             onOpen={
               app.label === 'Journal' ? openJournal
                 : app.label === 'Feelings' ? openFeelings
-                  : app.label === 'Mood History' ? openHistory
+                    : app.label === 'Blog' ? () => openBlog()
+                      : app.label === 'Mood History' ? openHistory
+                      : app.label === 'Control Panel' ? openControlPanel
                     : undefined
             }
           />
@@ -122,10 +151,39 @@ function Desktop() {
           }}
         >
           <Journal
+          onOpenBlog={() => openBlog()}
+            key={journalEntryToEdit || 'new-entry'}
             entries={journalEntries}
+            initialEntryId={journalEntryToEdit}
             onCreateEntry={createJournalEntry}
             onUpdateEntry={updateJournalEntry}
             onDeleteEntry={deleteJournalEntry}
+            onOpenSavedEntry={openBlog}
+          />
+        </Window>
+      )}
+
+      {blogState !== 'closed' && (
+        <Window
+          title="Thoughts Blog"
+          icon="thoughts"
+          isHidden={blogState === 'minimized'}
+          isActive={activeWindow === 'blog'}
+          initialPosition={{ x: 230, y: 80 }}
+          onFocus={() => setActiveWindow('blog')}
+          onMinimize={() => {
+            setBlogState('minimized')
+            setActiveWindow(null)
+          }}
+          onClose={() => {
+            setBlogState('closed')
+            setActiveWindow(null)
+          }}
+        >
+          <Blog
+            entries={journalEntries}
+            selectedEntryId={selectedBlogEntryId}
+            onEditEntry={openJournalEntry}
           />
         </Window>
       )}
@@ -172,6 +230,27 @@ function Desktop() {
         </Window>
       )}
 
+      {controlPanelState !== 'closed' && (
+        <Window
+          title="Control Panel"
+          icon="control"
+          isHidden={controlPanelState === 'minimized'}
+          isActive={activeWindow === 'control-panel'}
+          initialPosition={{ x: 320, y: 100 }}
+          onFocus={() => setActiveWindow('control-panel')}
+          onMinimize={() => {
+            setControlPanelState('minimized')
+            setActiveWindow(null)
+          }}
+          onClose={() => {
+            setControlPanelState('closed')
+            setActiveWindow(null)
+          }}
+        >
+          <ControlPanel selectedTheme={desktopTheme} onSelectTheme={setDesktopTheme} />
+        </Window>
+      )}
+
       <div onClick={(event) => event.stopPropagation()}>
         <Taskbar
           isStartOpen={isStartOpen}
@@ -192,6 +271,14 @@ function Desktop() {
               state: feelingsState,
               isActive: feelingsState === 'open' && activeWindow === 'feelings',
               onClick: () => toggleWindow('feelings', feelingsState, setFeelingsState),
+            },
+            {
+              id: 'blog',
+              label: 'Blog',
+              icon: 'thoughts',
+              state: blogState,
+              isActive: blogState === 'open' && activeWindow === 'blog',
+              onClick: () => toggleWindow('blog', blogState, setBlogState),
             },
             {
               id: 'history',

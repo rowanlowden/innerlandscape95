@@ -8,7 +8,7 @@ function formatTime(date) {
   }).format(date)
 }
 
-function Taskbar({ isStartOpen, onToggleStart, programs, onOpenJournal }) {
+function Taskbar({ isStartOpen, onToggleStart, programs, onOpenJournal, onOpenBlog }) {
   const [time, setTime] = useState(() => formatTime(new Date()))
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function Taskbar({ isStartOpen, onToggleStart, programs, onOpenJournal }) {
 
   return (
     <>
-      {isStartOpen && <StartMenu onOpenJournal={onOpenJournal} />}
+      {isStartOpen && <StartMenu onOpenJournal={onOpenJournal} onOpenBlog={onOpenBlog} />}
       <footer className="taskbar">
         <button
           className={`start-button ${isStartOpen ? 'is-pressed' : ''}`}

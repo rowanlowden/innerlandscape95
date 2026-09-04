@@ -1,12 +1,12 @@
 const menuItems = [
   { label: 'Journal', icon: 'journal' },
+  { label: 'Blog', icon: 'thoughts' },
   { label: 'Feelings', icon: 'feelings' },
-  { label: 'Thoughts', icon: 'thoughts' },
   { label: 'Mood History', icon: 'history' },
   { label: 'Control Panel', icon: 'control' },
 ]
 
-function StartMenu({ onOpenJournal }) {
+function StartMenu({ onOpenJournal, onOpenBlog }) {
   return (
     <div className="start-menu" role="menu" aria-label="Start menu">
       <div className="start-menu__rail" aria-hidden="true">
@@ -18,7 +18,7 @@ function StartMenu({ onOpenJournal }) {
             key={item.label}
             type="button"
             role="menuitem"
-            onClick={item.label === 'Journal' ? onOpenJournal : undefined}
+            onClick={item.label === 'Journal' ? onOpenJournal : item.label === 'Blog' ? onOpenBlog : undefined}
           >
             <span className={`menu-icon menu-icon--${item.icon}`} aria-hidden="true" />
             <span>{item.label}</span>
